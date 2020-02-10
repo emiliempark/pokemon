@@ -1,29 +1,42 @@
-import React from 'react';
-import axios from 'axios';
-import logo from '../../logo.svg';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { updateMember } from '../../components/Team/actions'
 
 import './App.css';
 
 import Team from '../../components/Team';
 import Search from '../../components/Search';
 
-function App() {
-  // get pokemons
-  axios.get('https://pokeapi.co/api/v2/pokemon/ditto/')
-  .then((res) => {
-      console.log('hey', res);
-  });
+const App = function(props) {
 
-
+  useEffect(() => {
+    if(localStorage.members){
+      props.updateMember(JSON.parse(localStorage.members)); 
+    }
+     
+  }, []);
+  
   return (
     <div className="App">
       <header className="App-header">
-        <Team />
+        <Team members={props.members}/>
         <Search />
       </header>
       
     </div>
   );
 }
+const mapStateToProps = (state) => {
+  return {
+      members: state.team.list,
+      maxEntry: state.team.maxEntry
+  }
+}
 
-export default App;
+const mapDispatchToProps = (dispatch) => {
+  return {
+      updateMember : (array) => dispatch(updateMember(array))
+  }
+  
+}
+export default connect(mapStateToProps, mapDispatchToProps)(App);
