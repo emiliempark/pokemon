@@ -1,12 +1,7 @@
 import React, { useState } from 'react'
 
-import { apiCall } from '../../api';
-
 export default function Team() {
-    apiCall.get('ditto/')
-    .then((res) => {
-        console.log('hey', res);
-    });
+
     let [ maxEntry, setMaxEntry ] = useState(6);
     let [ members, setMembers ] = useState([]);
     
