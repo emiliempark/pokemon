@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux';
-
+import styled from 'styled-components';
 import { updateMember } from './actions';
+
+import styles from './styles';
+const Div = styled.div`${styles}`;
 
 const Team = function(props) {
     console.log('team', props.members.length);
@@ -42,13 +45,13 @@ const Team = function(props) {
     }
 
     return (
-        <div>
+        <Div>
             Team
             <ul>
             { props.members.length !== 0 && props.members.map((item,i) => <li key={i} className="card filled"> {item.name} <button onClick={() => removeMember(item.id)}>remove</button></li>) }    
             { createEmptyEntry() }   
             </ul>
-        </div>
+        </Div>
     )
 }
 
