@@ -1,15 +1,29 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux';
 
-import { addMember } from './actions';
+import { updateMember } from './actions';
 
 const Team = function(props) {
-    console.log(props.members);
-    let [ members, setMembers ] = useState([]);
-    
+    console.log('team', props.members.length);
+    useEffect(() => {
+        console.log('change');
+         
+      }, [props.members]);
     function removeMember(id){
-        console.log('remove member');
-        setMembers();
+        // console.log('remove member', id);
+
+        // get rid of object matching id
+        let result = props.members.filter((item) => {
+            // console.log('filter', item.id);
+            return item.id !== id
+        });
+        
+        
+        localStorage.setItem('members', JSON.stringify(result) );
+
+
+        // console.log('oi', result, localStorage.getItem('members'));
+        props.updateMember(result);
     }
     function createCard(index){
         return <li key={props.members.length + index} className="card empty">Add Pokemon { props.members.length + index + 1}</li>;
@@ -31,7 +45,7 @@ const Team = function(props) {
         <div>
             Team
             <ul>
-            { props.members.length !== 0 && props.members.map((item,i) => <li key={i} className="card filled"> {item} <button onClick={removeMember}>remove</button></li>) }    
+            { props.members.length !== 0 && props.members.map((item,i) => <li key={i} className="card filled"> {item.name} <button onClick={() => removeMember(item.id)}>remove</button></li>) }    
             { createEmptyEntry() }   
             </ul>
         </div>
@@ -40,14 +54,13 @@ const Team = function(props) {
 
 const mapStateToProps = (state) => {
     return {
-        members: state.team.list,
         maxEntry: state.team.maxEntry
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        removeToTeam : () => dispatch(addMember())
+        updateMember : (value) => dispatch(updateMember(value))
     }
     
 }

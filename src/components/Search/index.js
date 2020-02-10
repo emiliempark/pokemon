@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { getPokemon } from '../../api';
-import { addMember } from '../Team/actions';
+import { addMember, updateMember } from '../Team/actions';
 
 const Search = function(props) {
     let [keyword, setKeyword] = useState('');
@@ -24,9 +24,20 @@ const Search = function(props) {
         setKeyword(e.target.value);
     }
 
-    function addToTeam(){
-        console.log('add to team');
-        props.addToTeam();
+    function addToTeam(POKEMON){
+        console.log('add to team', JSON.stringify(POKEMON));
+        
+        // localStorage
+        let newMembers = props.members;
+
+        newMembers.push(POKEMON);
+
+        localStorage.setItem('members', JSON.stringify(newMembers) );
+
+
+        console.log('oi', newMembers, localStorage.getItem('members'));
+        // Redux
+        props.updateMember(newMembers);
         
     }
 
@@ -42,9 +53,8 @@ const Search = function(props) {
             {result !== undefined &&( 
                 <p>
                     {result.name} {result.id} 
-                    {props.members.length <= props.maxEntry ? 
-                        (<button onClick={addToTeam}>  Add to Team</button>) :
-                        (<button onClick={addToTeam}>  Full</button>)
+                    {(props.members.length < props.maxEntry ) &&
+                        (<button onClick={() => addToTeam(result)}>  Add to Team</button>)
                     }
                 </p>
             )}
@@ -61,7 +71,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addToTeam : () => dispatch(addMember())
+        updateMember : (value) => dispatch(updateMember(value))
     }
 
 }
