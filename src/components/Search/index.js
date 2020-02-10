@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
+import { connect } from 'react-redux'
 import { getPokemon } from '../../api';
+import { addMember } from '../Team/actions';
 
-export default function Search() {
+const Search = function(props) {
     let [keyword, setKeyword] = useState('');
     let [result, setResult] = useState();
+    
     async function searchPokemon(e){
         e.preventDefault();
         console.log('search...', keyword);
@@ -23,6 +26,8 @@ export default function Search() {
 
     function addToTeam(){
         console.log('add to team');
+        props.addToTeam();
+        
     }
 
     return (
@@ -34,9 +39,31 @@ export default function Search() {
             </form>
 
             <p>Result</p>
-            {result !== undefined && (
-                <p>{result.name} {result.id} <button onClick={addToTeam}> Add to Team</button></p>
+            {result !== undefined &&( 
+                <p>
+                    {result.name} {result.id} 
+                    {props.members.length <= props.maxEntry ? 
+                        (<button onClick={addToTeam}>  Add to Team</button>) :
+                        (<button onClick={addToTeam}>  Full</button>)
+                    }
+                </p>
             )}
         </div>
     )
 }
+
+const mapStateToProps = (state) => {
+    return {
+        members: state.team.list,
+        maxEntry: state.team.maxEntry
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addToTeam : () => dispatch(addMember())
+    }
+
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Search);

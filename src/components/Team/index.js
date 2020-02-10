@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
+import { connect } from 'react-redux';
 
-export default function Team() {
+import { addMember } from './actions';
 
-    let [ maxEntry, setMaxEntry ] = useState(6);
+const Team = function(props) {
+    console.log(props.members);
     let [ members, setMembers ] = useState([]);
     
     function removeMember(id){
@@ -10,14 +12,15 @@ export default function Team() {
         setMembers();
     }
     function createCard(index){
-        return <li key={index}>Pokemon {index + 1} <button onClick={removeMember}>remove</button></li>;
+        return <li key={props.members.length + index} className="card empty">Add Pokemon { props.members.length + index + 1}</li>;
     }
+    
 
-    function createEntry (){
+    function createEmptyEntry (){
         console.log('work');
         let cards = [];
         
-        for(let i= 0; i < maxEntry ; i++){
+        for(let i= 0; i < ( props.maxEntry - props.members.length); i++){
             cards.push(createCard(i));
         }
         
@@ -28,8 +31,26 @@ export default function Team() {
         <div>
             Team
             <ul>
-            { createEntry() }   
+            { props.members.length !== 0 && props.members.map((item,i) => <li key={i} className="card filled"> {item} <button onClick={removeMember}>remove</button></li>) }    
+            { createEmptyEntry() }   
             </ul>
         </div>
     )
 }
+
+const mapStateToProps = (state) => {
+    return {
+        members: state.team.list,
+        maxEntry: state.team.maxEntry
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        removeToTeam : () => dispatch(addMember())
+    }
+    
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Team);
+
+
